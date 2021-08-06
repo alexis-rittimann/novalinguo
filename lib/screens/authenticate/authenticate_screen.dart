@@ -45,7 +45,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
         : Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              backgroundColor: Colors.blueGrey,
+              backgroundColor: Colors.purple,
               elevation: 0.0,
               title: Text(showSignIn
                   ? 'Sign in to novalinguo'
@@ -124,6 +124,11 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         }
                       },
                     ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      error,
+                      style: TextStyle(color: Colors.red, fontSize: 15.0),
+                    )
                   ],
                 ),
               ),
