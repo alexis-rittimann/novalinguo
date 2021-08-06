@@ -43,9 +43,9 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     return loading
         ? Loading()
         : Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Color.fromRGBO(41, 42, 75, 1),
             appBar: AppBar(
-              backgroundColor: Colors.purple,
+              backgroundColor: Color.fromRGBO(25, 26, 46, 1),
               elevation: 0.0,
               title: Text(showSignIn
                   ? 'Sign in to novalinguo'
@@ -79,29 +79,56 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                           )
                         : Container(),
                     !showSignIn ? SizedBox(height: 10.0) : Container(),
-                    TextFormField(
-                      controller: emailController,
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'email'),
-                      validator: (value) => value == null || value.isEmpty
-                          ? "Enter an email"
-                          : null,
+                    SizedBox(height: 100.0),
+                    Text(
+                      'Connexion',
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 30),
                     ),
-                    SizedBox(height: 10.0),
-                    TextFormField(
-                      controller: passwordController,
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'password'),
-                      obscureText: true,
-                      validator: (value) => value != null && value.length < 6
-                          ? "Enter a password with at least 6 characters"
-                          : null,
+                    SizedBox(height: 50.0),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(13),
+                      child: TextFormField(
+                        controller: emailController,
+                        decoration: textInputDecoration.copyWith(
+                            hintText: 'Adresse mail'),
+                        validator: (value) => value == null || value.isEmpty
+                            ? "Enter an email"
+                            : null,
+                      ),
                     ),
-                    SizedBox(height: 10.0),
-                    ElevatedButton(
-                      child: Text(
-                        showSignIn ? "Sign In" : "Register",
-                        style: TextStyle(color: Colors.white),
+                    SizedBox(height: 50.0),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(13),
+                      child: TextFormField(
+                        controller: passwordController,
+                        decoration: textInputDecoration.copyWith(
+                            hintText: 'Mot de passe'),
+                        obscureText: true,
+                        validator: (value) => value != null && value.length < 6
+                            ? "Enter a password with at least 6 characters"
+                            : null,
+                      ),
+                    ),
+                    SizedBox(height: 50.0),
+                    ElevatedButton.icon(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromRGBO(131, 133, 238, 1),
+                        ),
+                      ),
+                      label: Text(
+                        showSignIn ? "NEXT" : "Register",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      icon: Icon(
+                        Icons.east,
+                        color: Colors.black,
+                        size: 25.0,
                       ),
                       onPressed: () async {
                         if (_formKey.currentState?.validate() == true) {
@@ -129,6 +156,62 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                       error,
                       style: TextStyle(color: Colors.red, fontSize: 15.0),
                     )
+                  ],
+                ),
+              ),
+            ),
+
+            // Création du Bouton d'Aceuil
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Color.fromRGBO(254, 209, 72, 1),
+              onPressed: () {},
+              child: Icon(
+                Icons.home,
+                color: Colors.black,
+                size: 40,
+              ),
+            ),
+            // Je place ensuite le Bouton au millieu
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            // Permet de voir les element de la page entre le bouton Acceuil et footerBar
+            extendBody: true,
+
+            // Création footerBar + Icons du footer
+            bottomNavigationBar: ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
+              child: BottomAppBar(
+                // avce l'argument "shape" je fait un espace enntre le bouton Acceuil
+                // et la footerBar
+                shape: CircularNotchedRectangle(),
+                //Regler l'espace bouton et footerBar
+                notchMargin: 25,
+                color: Color.fromRGBO(25, 26, 46, 1),
+                child: Row(
+                  children: [
+                    Spacer(),
+                    IconButton(
+                      icon: Icon(
+                        Icons.person,
+                        size: 35,
+                        color: Color.fromRGBO(254, 209, 72, 1),
+                      ),
+                      onPressed: () {},
+                    ),
+                    Spacer(),
+                    Spacer(),
+                    Spacer(),
+                    Spacer(),
+                    Spacer(),
+                    IconButton(
+                      icon: Icon(
+                        Icons.military_tech,
+                        color: Color.fromRGBO(254, 209, 72, 1),
+                        size: 35,
+                      ),
+                      onPressed: () {},
+                    ),
+                    Spacer(),
                   ],
                 ),
               ),
