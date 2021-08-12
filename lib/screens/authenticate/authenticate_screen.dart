@@ -38,6 +38,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     });
   }
 
+  bool _value = false;
   @override
   Widget build(BuildContext context) {
     return loading
@@ -62,36 +63,63 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                 ),
               ],
             ),
+
+            // LE BODY #############################################################
             body: Container(
               padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
+                    Container(
+                      //padding: EdgeInsets.all(20),
+                      alignment: Alignment.topLeft,
+                      height: 80,
+                      child: IconButton(
+                        icon: Icon(Icons.west),
+                        iconSize: 50.0,
+                        color: Color.fromRGBO(131, 133, 238, 1),
+                        onPressed: () => toggleView(),
+                      ),
+                    ),
+
+                    Container(
+                      alignment: Alignment.topLeft,
+                      //padding: EdgeInsets.all(20),
+                      //height: 150,
+                      child: Text(
+                        /*
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.ellipsis,
+                        */
+                        showSignIn ? 'Connexion' : 'Inscription',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 30),
+                      ),
+                    ),
+                    SizedBox(height: 35.0),
                     !showSignIn
-                        ? TextFormField(
-                            controller: nameController,
-                            decoration:
-                                textInputDecoration.copyWith(hintText: 'name'),
-                            validator: (value) => value == null || value.isEmpty
-                                ? "Enter a name"
-                                : null,
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: TextFormField(
+                              controller: nameController,
+                              decoration:
+                                  textInputDecoration.copyWith(hintText: 'Nom'),
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? "Enter a name"
+                                      : null,
+                            ),
                           )
                         : Container(),
                     !showSignIn ? SizedBox(height: 10.0) : Container(),
-                    SizedBox(height: 100.0),
-                    Text(
-                      'Connexion',
-                      textAlign: TextAlign.left,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 30),
-                    ),
-                    SizedBox(height: 50.0),
+
+                    SizedBox(height: 20.0),
+
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(13),
+                      borderRadius: BorderRadius.circular(14),
                       child: TextFormField(
                         controller: emailController,
                         decoration: textInputDecoration.copyWith(
@@ -101,9 +129,9 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             : null,
                       ),
                     ),
-                    SizedBox(height: 50.0),
+                    SizedBox(height: 30.0),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(13),
+                      borderRadius: BorderRadius.circular(14),
                       child: TextFormField(
                         controller: passwordController,
                         decoration: textInputDecoration.copyWith(
@@ -114,43 +142,117 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             : null,
                       ),
                     ),
-                    SizedBox(height: 50.0),
-                    ElevatedButton.icon(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromRGBO(131, 133, 238, 1),
+                    SizedBox(height: 30.0),
+                    !showSignIn
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: TextFormField(
+                              controller: nameController,
+                              decoration:
+                                  textInputDecoration.copyWith(hintText: 'Âge'),
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? "Âge requis 15 ans"
+                                      : null,
+                            ),
+                          )
+                        : Container(),
+                    !showSignIn ? SizedBox(height: 10.0) : Container(),
+
+                    //SizedBox(height: 30.0),
+                    !showSignIn
+                        ? Row(children: <Widget>[
+                            Checkbox(
+                              value: true,
+                              onChanged: (value) {
+                                setState(() {
+                                  value = _value;
+                                });
+                              },
+                              activeColor: Colors.white,
+                            ),
+                            // Expanded() permet de pas dépasser l'espace du telephone
+                            Expanded(
+                              child: Text(
+                                "J'accepte les conditions générales d'utilisation",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontFamily: "Raleway"),
+                              ),
+                            )
+                          ])
+                        : Container(),
+                    SizedBox(height: 20.0),
+                    // BOUTON SUIVANT #####################################################
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: SizedBox(
+                        height: 50,
+                        width: 170,
+                        child: ElevatedButton.icon(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              Color.fromRGBO(131, 133, 238, 1),
+                            ),
+                          ),
+                          icon: Text(
+                            "Suivant",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20.0,
+                                fontFamily: "Raleway"),
+                          ),
+                          label: Icon(
+                            Icons.east,
+                            color: Colors.black,
+                            size: 40.0,
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() == true) {
+                              setState(() => loading = true);
+                              var password = passwordController.value.text;
+                              var email = emailController.value.text;
+                              var name = nameController.value.text;
+
+                              dynamic result = showSignIn
+                                  ? await _auth.signInWithEmailAndPassword(
+                                      email, password)
+                                  : await _auth.registerWithEmailAndPassword(
+                                      name, email, password);
+                              if (result == null) {
+                                setState(() {
+                                  loading = false;
+                                  error = 'Please supply a valid email';
+                                });
+                              }
+                            }
+                          },
                         ),
                       ),
-                      label: Text(
-                        showSignIn ? "NEXT" : "Register",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      icon: Icon(
-                        Icons.east,
-                        color: Colors.black,
-                        size: 25.0,
-                      ),
-                      onPressed: () async {
-                        if (_formKey.currentState?.validate() == true) {
-                          setState(() => loading = true);
-                          var password = passwordController.value.text;
-                          var email = emailController.value.text;
-                          var name = nameController.value.text;
-
-                          dynamic result = showSignIn
-                              ? await _auth.signInWithEmailAndPassword(
-                                  email, password)
-                              : await _auth.registerWithEmailAndPassword(
-                                  name, email, password);
-                          if (result == null) {
-                            setState(() {
-                              loading = false;
-                              error = 'Please supply a valid email';
-                            });
-                          }
-                        }
-                      },
                     ),
+                    SizedBox(height: 20.0),
+                    !showSignIn
+                        ? Column(
+                            children: [
+                              Text(
+                                "Déjà inscrit ?",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontFamily: "Raleway"),
+                              ),
+                              Text(
+                                "Conecte-toi JUSTE ICI !",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontFamily: "Raleway"),
+                              )
+                            ],
+                          )
+                        : Container(),
+
                     SizedBox(height: 10.0),
                     Text(
                       error,
@@ -160,6 +262,8 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                 ),
               ),
             ),
+
+            // LE FOOTER #######################################################
 
             // Création du Bouton d'Aceuil
             floatingActionButton: FloatingActionButton(
@@ -185,8 +289,8 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                 // et la footerBar
                 shape: CircularNotchedRectangle(),
                 //Regler l'espace bouton et footerBar
-                notchMargin: 25,
-                color: Color.fromRGBO(25, 26, 46, 1),
+                notchMargin: 15,
+                //color: Color.fromRGBO(25, 26, 46, 1),
                 child: Row(
                   children: [
                     Spacer(),
