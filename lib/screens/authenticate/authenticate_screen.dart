@@ -74,7 +74,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                     Container(
                       //padding: EdgeInsets.all(20),
                       alignment: Alignment.topLeft,
-                      height: 80,
+                      height: 20,
                       child: IconButton(
                         icon: Icon(Icons.west),
                         iconSize: 50.0,
@@ -242,13 +242,25 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                                     fontSize: 16.0,
                                     fontFamily: "Raleway"),
                               ),
-                              Text(
-                                "Conecte-toi JUSTE ICI !",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontFamily: "Raleway"),
-                              )
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Connecte-toi",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.0,
+                                        fontFamily: "Raleway"),
+                                  ),
+                                  TextButton(
+                                    child: Text("JUSTE ICI !",
+                                        style: TextStyle(
+                                            color: Color.fromRGBO(
+                                                254, 209, 72, 1))),
+                                    onPressed: () => toggleView(),
+                                  ),
+                                ],
+                              ),
                             ],
                           )
                         : Container(),
