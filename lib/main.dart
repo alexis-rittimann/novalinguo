@@ -1,11 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:novalinguo/screens/chat/chat_screen.dart';
 import 'package:novalinguo/screens/splashscreen_wrapper.dart';
 import 'package:novalinguo/services/authentication.dart';
 import 'package:provider/provider.dart';
+import 'models/chat_params.dart';
 import 'models/user.dart';
 //import 'package:novalinguo/screens/authenticate/authenticate_screen.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
       initialData: null,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: SplashScreenWrapper(),
+        initialRoute: '/',
+        onGenerateRoute: (settings) => RouteGenerator.generateRoute(settings),
         theme: ThemeData(
           //primarySwatch: Colors.blue,
           backgroundColor: Color.fromRGBO(41, 42, 75, 1),
@@ -35,5 +37,43 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class RouteGenerator {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/':
+        return MaterialPageRoute(builder: (context) => SplashScreenWrapper());
+      case '/chat':
+        var arguments = settings.arguments;
+        if (arguments != null) {
+          return PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  ChatScreen(chatParams: arguments as ChatParams),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                animation =
+                    CurvedAnimation(curve: Curves.ease, parent: animation);
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              });
+        } else {
+          return pageNotFound();
+        }
+      default:
+        return pageNotFound();
+    }
+  }
+
+  static MaterialPageRoute pageNotFound() {
+    return MaterialPageRoute(
+        builder: (context) => Scaffold(
+            appBar: AppBar(title: Text("Error"), centerTitle: true),
+            body: Center(
+              child: Text("Page not found"),
+            )));
   }
 }
