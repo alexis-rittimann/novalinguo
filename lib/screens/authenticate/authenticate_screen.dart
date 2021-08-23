@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/common/loading.dart';
 import 'package:novalinguo/services/authentication.dart';
+import 'package:novalinguo/common/bottomBar.dart';
 
 class AuthenticateScreen extends StatefulWidget {
   @override
@@ -281,64 +282,16 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                 ),
               ),
             ),
-
             // LE FOOTER #######################################################
-
-            // Création du Bouton d'Aceuil
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: Color.fromRGBO(254, 209, 72, 1),
-              onPressed: () {},
-              child: Icon(
-                Icons.home,
-                color: Colors.black,
-                size: 40,
-              ),
-            ),
+            /*
+            floatingActionButton: FloatingButton(),
+            bottomNavigationBar: BottomNavigation(),
             // Je place ensuite le Bouton au millieu
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             // Permet de voir les element de la page entre le bouton Acceuil et footerBar
             extendBody: true,
-
-            // Création footerBar + Icons du footer
-            bottomNavigationBar: ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
-              child: BottomAppBar(
-                // avce l'argument "shape" je fait un espace enntre le bouton Acceuil
-                // et la footerBar
-                shape: CircularNotchedRectangle(),
-                //Regler l'espace bouton et footerBar
-                notchMargin: 15,
-                //color: Color.fromRGBO(25, 26, 46, 1),
-                child: Row(
-                  children: [
-                    Spacer(),
-                    IconButton(
-                      icon: Icon(
-                        Icons.person,
-                        size: 35,
-                        color: Color.fromRGBO(254, 209, 72, 1),
-                      ),
-                      onPressed: () {},
-                    ),
-                    Spacer(),
-                    Spacer(),
-                    Spacer(),
-                    Spacer(),
-                    Spacer(),
-                    IconButton(
-                      icon: Icon(
-                        Icons.military_tech,
-                        color: Color.fromRGBO(254, 209, 72, 1),
-                        size: 35,
-                      ),
-                      onPressed: () {},
-                    ),
-                    Spacer(),
-                  ],
-                ),
-              ),
-            ),
+            */
           );
   }
 }
