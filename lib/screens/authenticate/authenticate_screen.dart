@@ -17,23 +17,27 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
-  bool showSignIn = true;
+  final ageController = TextEditingController();
+  bool showSignIn = true; //permet de switcher de formulaire
 
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    ageController.dispose();
     super.dispose();
   }
 
   void toggleView() {
+    //permet de changer le showSignIn et remtre le form propre
     setState(() {
       _formKey.currentState?.reset();
       error = '';
       emailController.text = '';
       nameController.text = '';
       passwordController.text = '';
+      ageController.text = '';
       showSignIn = !showSignIn;
     });
   }
@@ -42,15 +46,16 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Loading()
+        ? Loading() //mets le loader en full page sinon creer la vue
         : Scaffold(
             backgroundColor: Color.fromRGBO(41, 42, 75, 1),
             appBar: AppBar(
               backgroundColor: Color.fromRGBO(25, 26, 46, 1),
               elevation: 0.0,
-              title: Text(showSignIn
-                  ? 'Sign in to novalinguo'
-                  : 'Register to novalnguo'),
+              title: Text(
+                  showSignIn // ? = si showSignIn est true : = sinon fait ca
+                      ? 'Sign in to novalinguo'
+                      : 'Register to novalnguo'),
               actions: <Widget>[
                 TextButton.icon(
                   icon: Icon(
@@ -147,12 +152,13 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(14),
                             child: TextFormField(
-                              controller: nameController,
+                              keyboardType: TextInputType.number,
+                              controller: ageController,
                               decoration:
                                   textInputDecoration.copyWith(hintText: 'Âge'),
                               validator: (value) =>
                                   value == null || value.isEmpty
-                                      ? "Âge requis 15 ans"
+                                      ? "Âge requis 16 ans"
                                       : null,
                             ),
                           )
@@ -214,12 +220,13 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               var password = passwordController.value.text;
                               var email = emailController.value.text;
                               var name = nameController.value.text;
+                              var age = ageController.value.text;
 
                               dynamic result = showSignIn
                                   ? await _auth.signInWithEmailAndPassword(
                                       email, password)
                                   : await _auth.registerWithEmailAndPassword(
-                                      name, email, password);
+                                      name, email, password, age);
                               if (result == null) {
                                 setState(() {
                                   loading = false;
