@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/common/loading.dart';
 import 'package:novalinguo/services/authentication.dart';
-import 'package:novalinguo/common/bottomBar.dart';
+//import 'package:novalinguo/common/bottomBar.dart';
 
 class AuthenticateScreen extends StatefulWidget {
   @override
