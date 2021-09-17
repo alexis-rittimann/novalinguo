@@ -39,10 +39,10 @@ class AuthenticationService {
         throw Exception("No user found");
       } else {
         await DatabaseService(user.uid).saveUser(name, age);
-
         return _userFromFirebaseUser(user);
       }
     } catch (exception) {
+      //gere les erreure de firebase
       print(exception.toString());
       return null;
     }

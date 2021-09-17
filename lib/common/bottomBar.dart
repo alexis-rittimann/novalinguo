@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:novalinguo/screens/home/bienvenue_screen.dart';
+import 'package:novalinguo/screens/home/home_screen.dart';
+import 'package:novalinguo/screens/home/profils2_screen.dart';
+import 'package:novalinguo/screens/home/tchatArriere_screen.dart';
+import 'package:novalinguo/screens/home/user_list.dart';
 
 // Création du Bouton d'Aceuil
 class FloatingButton extends StatelessWidget {
@@ -6,7 +11,14 @@ class FloatingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: Color.fromRGBO(254, 209, 72, 1),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ),
+        );
+      },
       child: Icon(
         Icons.home,
         color: Colors.black,
@@ -38,7 +50,14 @@ class BottomNavigation extends StatelessWidget {
                 size: 35,
                 color: Color.fromRGBO(254, 209, 72, 1),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Profils2(),
+                  ),
+                );
+              },
             ),
             Spacer(),
             Spacer(),
@@ -51,7 +70,14 @@ class BottomNavigation extends StatelessWidget {
                 color: Color.fromRGBO(254, 209, 72, 1),
                 size: 30,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TchatArriere(),
+                  ),
+                );
+              },
             ),
             Spacer(),
           ],

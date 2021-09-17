@@ -31,7 +31,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
   }
 
   void toggleView() {
-    //permet de changer le showSignIn et remtre le form propre
+    //permet de changer le showSignIn et rendre le form propre
     setState(() {
       _formKey.currentState?.reset();
       error = '';
@@ -49,46 +49,54 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     return loading
         ? Loading() //mets le loader en full page sinon creer la vue
         : Scaffold(
-            backgroundColor: Color.fromRGBO(41, 42, 75, 1),
-            appBar: AppBar(
-              backgroundColor: Color.fromRGBO(25, 26, 46, 1),
-              elevation: 0.0,
-              title: Text(
-                  showSignIn // ? = si showSignIn est true : = sinon fait ca
-                      ? 'Sign in to novalinguo'
-                      : 'Register to novalnguo'),
-              actions: <Widget>[
-                TextButton.icon(
-                  icon: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  label: Text(showSignIn ? "Register" : 'Sign In',
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () => toggleView(),
-                ),
-              ],
-            ),
+            // backgroundColor: Color.fromRGBO(41, 42, 75, 1),
+            // appBar: AppBar(
+            //   backgroundColor: Color.fromRGBO(25, 26, 46, 1),
+            //   elevation: 0.0,
+            //   title: Text(
+            //       showSignIn // ? = si showSignIn est true : = sinon fait ca
+            //           ? 'Sign in to novalinguo'
+            //           : 'Register to novalnguo'),
+            //   actions: <Widget>[
+            //     TextButton.icon(
+            //       icon: Icon(
+            //         Icons.person,
+            //         color: Colors.white,
+            //       ),
+            //       label: Text(showSignIn ? "Register" : 'Sign In',
+            //           style: TextStyle(color: Colors.white)),
+            //       onPressed: () => toggleView(),
+            //     ),
+            //   ],
+            // ),
 
             // LE BODY #############################################################
             body: Container(
-              padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
+              padding: EdgeInsets.symmetric(vertical: 70.0, horizontal: 30.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    Container(
-                      //padding: EdgeInsets.all(20),
-                      alignment: Alignment.topLeft,
-                      height: 20,
-                      child: IconButton(
-                        icon: Icon(Icons.west),
-                        iconSize: 50.0,
-                        color: Color.fromRGBO(131, 133, 238, 1),
-                        onPressed: () => toggleView(),
+                    Row(children: [
+                      Container(
+                        //padding: EdgeInsets.all(20),
+                        alignment: Alignment.topLeft,
+                        height: 100,
+                        child: IconButton(
+                          icon: Icon(Icons.west),
+                          iconSize: 50.0,
+                          color: Color.fromRGBO(131, 133, 238, 1),
+                          onPressed: () => toggleView(),
+                        ),
                       ),
-                    ),
-
+                      Spacer(),
+                      Container(
+                        height: 100,
+                        child: Image.asset(
+                          "assets/icon/logo.png",
+                        ),
+                      ),
+                    ]),
                     Container(
                       alignment: Alignment.topLeft,
                       //padding: EdgeInsets.all(20),

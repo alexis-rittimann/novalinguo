@@ -17,9 +17,7 @@ class HomeScreen extends StatelessWidget {
       initialData: [],
       value: database.users,
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.purple,
           elevation: 0.0,
           title: Text('novalinguo'),
           actions: <Widget>[

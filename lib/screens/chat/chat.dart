@@ -54,8 +54,103 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Column(
-          children: [buildListMessage(), buildInput()],
+        Padding(
+          padding: EdgeInsets.fromLTRB(50, 60, 0, 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "assets/images/bulle.png",
+                      ),
+                      Expanded(
+                        child: Text(
+                          '  40',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        child: Row(
+                          children: [
+                            Container(
+                                width: 60,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(131, 133, 238, 1),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    bottomLeft: Radius.circular(4),
+                                  ),
+                                )),
+                            Container(
+                              width: 70,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(4),
+                                  bottomRight: Radius.circular(4),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        child: Row(children: [
+                          Text(
+                            'XP 1308',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 170.0),
+          padding: const EdgeInsets.only(top: 20.0),
+          width: MediaQuery.of(context).size.width,
+          height: 770,
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(131, 133, 238, 1),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+          ),
+          child: Column(
+            children: [
+              buildListMessage(),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+              ),
+              buildInput(),
+              Padding(
+                padding: EdgeInsets.all(65.0),
+              ),
+            ],
+          ),
         ),
         isLoading ? Loading() : Container()
       ],
@@ -96,34 +191,26 @@ class _ChatState extends State<Chat> {
 
   Widget buildInput() {
     return Container(
-      width: double.infinity,
+      width: 330.0,
       height: 50.0,
       decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.black, width: 0.5)),
-          color: Colors.white),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(11.0),
+      ),
       child: Row(
         children: [
-          Material(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 1.0),
-              child: IconButton(
-                icon: Icon(Icons.image),
-                onPressed: getImage,
-                color: Colors.yellow,
-              ),
-            ),
-            color: Colors.white,
+          Container(
+            width: 20,
           ),
           Flexible(
             child: TextField(
               onSubmitted: (value) {
                 onSendMessage(textEditingController.text, 0);
               },
-              style: TextStyle(color: Colors.blueGrey, fontSize: 15.0),
+              style: TextStyle(fontSize: 15.0),
               controller: textEditingController,
               decoration: InputDecoration.collapsed(
                 hintText: 'Your message...',
-                hintStyle: TextStyle(color: Colors.purple),
               ),
             ),
           ),
@@ -138,6 +225,7 @@ class _ChatState extends State<Chat> {
               ),
             ),
             color: Colors.white,
+            borderRadius: BorderRadius.circular(100.0),
           ),
         ],
       ),

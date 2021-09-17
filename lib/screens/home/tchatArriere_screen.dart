@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:novalinguo/common/bottomBar.dart';
 
 class TchatArriere extends StatelessWidget {
   @override
@@ -18,7 +19,7 @@ class TchatArriere extends StatelessWidget {
             Text("Thème du jour",
                 style: TextStyle(color: Colors.white, fontSize: 18)),
             Container(
-              child: Image.asset('images/theme_jour.png'),
+              child: Image.asset('assets/images/Designer.png'),
               height: 180,
               width: size.width,
               margin: EdgeInsets.all(30),
@@ -79,7 +80,7 @@ class TchatArriere extends StatelessWidget {
                           child: Text("nightmare"),
                           style: ElevatedButton.styleFrom(
                             onPrimary: Colors.black,
-                            primary: Color.fromRGBO(242, 243, 244, 1),
+                            primary: Color.fromRGBO(131, 133, 238, 1),
                             padding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 45),
                             shape: RoundedRectangleBorder(
@@ -149,7 +150,7 @@ class TchatArriere extends StatelessWidget {
                           child: Text("good day"),
                           style: ElevatedButton.styleFrom(
                             onPrimary: Colors.black,
-                            primary: Color.fromRGBO(242, 243, 244, 1),
+                            primary: Color.fromRGBO(131, 133, 238, 1),
                             padding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 40),
                             shape: RoundedRectangleBorder(
@@ -166,6 +167,12 @@ class TchatArriere extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingButton(),
+      bottomNavigationBar: BottomNavigation(),
+      // Je place ensuite le Bouton au millieu
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // Permet de voir les element de la page entre le bouton Acceuil et footerBar
+      extendBody: true,
     );
   }
 }
