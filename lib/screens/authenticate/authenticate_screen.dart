@@ -3,6 +3,7 @@ import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/common/loading.dart';
 import 'package:novalinguo/services/authentication.dart';
 //import 'package:novalinguo/common/bottomBar.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 class AuthenticateScreen extends StatefulWidget {
   @override
@@ -14,12 +15,13 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
   final _formKey = GlobalKey<FormState>();
   String error = '';
   bool loading = false;
-
+  bool isChecked = false;
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final ageController = TextEditingController();
   bool showSignIn = true; //permet de switcher de formulaire
+  DateTime selectedDate = DateTime.now();
 
   @override
   void dispose() {
@@ -28,6 +30,34 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     passwordController.dispose();
     ageController.dispose();
     super.dispose();
+  }
+
+// sélectionne la date et thème du widget
+  _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(1950),
+        lastDate: DateTime(2025),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light().copyWith(
+                primary: Color.fromRGBO(41, 42, 75, 1),
+                onPrimary: Color.fromRGBO(254, 209, 72, 1),
+              ),
+            ),
+            child: child!,
+          );
+        });
+
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+        var date =
+            "${picked.toLocal().day}/${picked.toLocal().month}/${picked.toLocal().year}";
+        ageController.text = date; // la variable date est envoyé à firestore
+      });
   }
 
   void toggleView() {
@@ -43,7 +73,13 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     });
   }
 
-  bool _value = false;
+  final passwordValidator = MultiValidator([
+    RequiredValidator(errorText: 'Enter a password'),
+    MinLengthValidator(8, errorText: 'Password must be at least 8 digits long'),
+    PatternValidator(r'(?=.*?[#?!@$%^&*-])',
+        errorText: 'Passwords must have at least one special character')
+  ]);
+
   @override
   Widget build(BuildContext context) {
     return loading
@@ -106,7 +142,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         textAlign: TextAlign.left,
                         overflow: TextOverflow.ellipsis,
                         */
-                        showSignIn ? 'Connexion' : 'Inscription',
+                        showSignIn ? 'Sign in' : 'Sign up',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -119,28 +155,23 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             borderRadius: BorderRadius.circular(14),
                             child: TextFormField(
                               controller: nameController,
-                              decoration:
-                                  textInputDecoration.copyWith(hintText: 'Nom'),
-                              validator: (value) =>
-                                  value == null || value.isEmpty
-                                      ? "Enter a name"
-                                      : null,
+                              decoration: textInputDecoration.copyWith(
+                                  hintText: 'Name'),
+                              validator:
+                                  RequiredValidator(errorText: 'Entrer a name'),
                             ),
                           )
                         : Container(),
                     !showSignIn ? SizedBox(height: 10.0) : Container(),
-
                     SizedBox(height: 20.0),
-
                     ClipRRect(
                       borderRadius: BorderRadius.circular(14),
                       child: TextFormField(
                         controller: emailController,
-                        decoration: textInputDecoration.copyWith(
-                            hintText: 'Adresse mail'),
-                        validator: (value) => value == null || value.isEmpty
-                            ? "Enter an email"
-                            : null,
+                        decoration:
+                            textInputDecoration.copyWith(hintText: 'Email'),
+                        validator:
+                            EmailValidator(errorText: "Enter a valid email"),
                       ),
                     ),
                     SizedBox(height: 30.0),
@@ -148,12 +179,10 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                       borderRadius: BorderRadius.circular(14),
                       child: TextFormField(
                         controller: passwordController,
-                        decoration: textInputDecoration.copyWith(
-                            hintText: 'Mot de passe'),
+                        decoration:
+                            textInputDecoration.copyWith(hintText: 'Password'),
                         obscureText: true,
-                        validator: (value) => value != null && value.length < 6
-                            ? "Enter a password with at least 6 characters"
-                            : null,
+                        validator: passwordValidator,
                       ),
                     ),
                     SizedBox(height: 30.0),
@@ -161,35 +190,41 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(14),
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              enableInteractiveSelection: false,
                               controller: ageController,
-                              decoration:
-                                  textInputDecoration.copyWith(hintText: 'Âge'),
+                              decoration: InputDecoration(
+                                labelText: 'Date of birth',
+                                icon: Icon(Icons.calendar_today),
+                              ),
                               validator: (value) =>
                                   value == null || value.isEmpty
-                                      ? "Âge requis 16 ans"
+                                      ? "Choose date"
                                       : null,
+                              onTap: () {
+                                FocusScope.of(context).requestFocus(
+                                    new FocusNode()); // permet de ne pas afficher le clavier
+                                _selectDate(context);
+                              },
                             ),
                           )
                         : Container(),
                     !showSignIn ? SizedBox(height: 10.0) : Container(),
-
                     //SizedBox(height: 30.0),
                     !showSignIn
                         ? Row(children: <Widget>[
                             Checkbox(
-                              value: true,
-                              onChanged: (value) {
+                              value: isChecked,
+                              onChanged: (bool? newValue) {
                                 setState(() {
-                                  value = _value;
+                                  isChecked = newValue!;
                                 });
                               },
-                              activeColor: Colors.white,
+                              activeColor: Colors.indigo,
                             ),
                             // Expanded() permet de pas dépasser l'espace du telephone
                             Expanded(
                               child: Text(
-                                "J'accepte les conditions générales d'utilisation",
+                                "I accept general conditions",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
@@ -212,7 +247,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             ),
                           ),
                           icon: Text(
-                            "Suivant",
+                            "Next",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20.0,
@@ -252,7 +287,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         ? Column(
                             children: [
                               Text(
-                                "Déjà inscrit ?",
+                                "Already registered ?",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
@@ -262,14 +297,14 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Connecte-toi",
+                                    "Log in",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16.0,
                                         fontFamily: "Raleway"),
                                   ),
                                   TextButton(
-                                    child: Text("JUSTE ICI !",
+                                    child: Text("RIGHT HERE !",
                                         style: TextStyle(
                                             color: Color.fromRGBO(
                                                 254, 209, 72, 1))),
