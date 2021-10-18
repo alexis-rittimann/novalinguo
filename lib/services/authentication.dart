@@ -5,6 +5,7 @@ import 'package:novalinguo/services/database.dart';
 class AuthenticationService {
   // tous le code de firebase authentification
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final currentUser = FirebaseAuth.instance.currentUser;
 
   AppUser? _userFromFirebaseUser(User? user) {
     //permet d'appeler user de notre user.dart au lieu de l'user firebase
@@ -30,7 +31,13 @@ class AuthenticationService {
   }
 
   Future registerWithEmailAndPassword(
-      String name, String email, String password, String age) async {
+      String name,
+      String email,
+      String password,
+      DateTime age,
+      String? country,
+      String? description,
+      String? image) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -38,7 +45,15 @@ class AuthenticationService {
       if (user == null) {
         throw Exception("No user found");
       } else {
-        await DatabaseService(user.uid).saveUser(name, age);
+        await DatabaseService(user.uid)
+            .saveUser(name, age, country, description, image);
+        try {
+          user.sendEmailVerification();
+          return user.uid;
+        } catch (exception) {
+          print("An error occured while trying to send email verification");
+          print(exception.toString());
+        }
         return _userFromFirebaseUser(user);
       }
     } catch (exception) {
@@ -52,6 +67,16 @@ class AuthenticationService {
     try {
       return await _auth.signOut();
     } catch (exception) {
+      print(exception.toString());
+      return null;
+    }
+  }
+
+  Future sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (exception) {
+      //gère les erreurs de firebase
       print(exception.toString());
       return null;
     }

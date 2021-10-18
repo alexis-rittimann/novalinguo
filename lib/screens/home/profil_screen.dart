@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:novalinguo/common/bottomBar.dart';
+import 'package:novalinguo/screens/authenticate/authenticate_screen.dart';
+import 'package:novalinguo/services/user.dart';
 
-class Profils2 extends StatelessWidget {
+class ProfilScreen extends StatefulWidget {
   @override
+  _ProfilScreenState createState() => _ProfilScreenState();
+}
+
+class _ProfilScreenState extends State<ProfilScreen> {
+  final UserService userSevice = UserService();
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(41, 42, 75, 1),
@@ -19,7 +27,7 @@ class Profils2 extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
-                    "Condition générales d'utilisation",
+                    "General conditions",
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -39,7 +47,7 @@ class Profils2 extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
-                    "Besoin d'aide ?",
+                    "Need help ?",
                     style: TextStyle(color: Colors.black),
                   ),
                   style: TextButton.styleFrom(
@@ -57,7 +65,29 @@ class Profils2 extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
-                    "Se déconnecter",
+                    "Sign out",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                height: 50,
+                width: 270,
+                child: TextButton(
+                  onPressed: () async {
+                    await userSevice.deleteUser();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AuthenticateScreen()));
+                  },
+                  child: Text(
+                    "Delete account",
                     style: TextStyle(color: Colors.black),
                   ),
                   style: TextButton.styleFrom(

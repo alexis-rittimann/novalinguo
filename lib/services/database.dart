@@ -9,8 +9,15 @@ class DatabaseService {
   final CollectionReference<Map<String, dynamic>> userCollection =
       FirebaseFirestore.instance.collection("users");
 
-  Future<void> saveUser(String name, String age) async {
-    return await userCollection.doc(uid).set({'name': name, 'age': age});
+  Future<void> saveUser(String name, DateTime age, String? country,
+      String? description, String? image) async {
+    return await userCollection.doc(uid).set({
+      'name': name,
+      'age': age,
+      'description': description,
+      'country': country,
+      'image': image,
+    });
   }
 
   AppUserData _userFromSnapshot(
@@ -21,6 +28,9 @@ class DatabaseService {
       uid: snapshot.id,
       name: data['name'],
       age: data['age'],
+      country: data['country'],
+      description: data['description'],
+      image: data['image'],
     );
   }
 

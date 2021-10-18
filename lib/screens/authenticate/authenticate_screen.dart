@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/common/loading.dart';
+import 'package:novalinguo/screens/authenticate/reset.dart';
 import 'package:novalinguo/services/authentication.dart';
 //import 'package:novalinguo/common/bottomBar.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -19,7 +22,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
-  final ageController = TextEditingController();
+  // final ageController = DateTime.now();
   bool showSignIn = true; //permet de switcher de formulaire
   DateTime selectedDate = DateTime.now();
 
@@ -28,7 +31,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
-    ageController.dispose();
+    // ageController.dispose();
     super.dispose();
   }
 
@@ -54,11 +57,32 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
-        var date =
-            "${picked.toLocal().day}/${picked.toLocal().month}/${picked.toLocal().year}";
-        ageController.text = date; // la variable date est envoyé à firestore
+        // if (isAdult(selectedDate)!) {
+        // var date =
+        //     '${picked.toLocal().day}/${picked.toLocal().month}/${picked.toLocal().year}';
+        // Timestamp DatetoTimeStamp = Timestamp.fromDate(selectedDate);
+
+        // ageController.text = date; // la variable date est envoyé à firestore
+        // }
       });
   }
+
+  // bool? isAdult(selectedDate) {
+  //   String datePattern = "dd-MM-yyyy";
+  //   DateTime today = DateTime.now();
+  //   DateTime birthDate = DateFormat(datePattern).parse(selectedDate);
+  //   // Date check
+  //   DateTime adultDate = DateTime(
+  //     birthDate.year + 16,
+  //     birthDate.month,
+  //     birthDate.day,
+  //   );
+
+  //   if (adultDate.isAfter(today))
+  //     error = "You need to be at least 16 years old";
+
+  //   return adultDate.isBefore(today);
+  // }
 
   void toggleView() {
     //permet de changer le showSignIn et rendre le form propre
@@ -68,7 +92,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
       emailController.text = '';
       nameController.text = '';
       passwordController.text = '';
-      ageController.text = '';
+      // ageController.text = '';
       showSignIn = !showSignIn;
     });
   }
@@ -77,7 +101,22 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     RequiredValidator(errorText: 'Enter a password'),
     MinLengthValidator(8, errorText: 'Password must be at least 8 digits long'),
     PatternValidator(r'(?=.*?[#?!@$%^&*-])',
-        errorText: 'Passwords must have at least one special character')
+        errorText: 'Password must have at least one special character')
+  ]);
+
+  final nameValidator = MultiValidator([
+    RequiredValidator(errorText: 'Enter a name'),
+    MaxLengthValidator(20, errorText: 'Name is too long'),
+    PatternValidator(r'[a-zA-Z]+', errorText: 'Name cannot have digits')
+  ]);
+
+  final emailValidator = MultiValidator([
+    RequiredValidator(errorText: 'Enter an email'),
+    EmailValidator(errorText: 'Enter a valid email'),
+  ]);
+
+  final dateValidator = MultiValidator([
+    RequiredValidator(errorText: 'Enter a date'),
   ]);
 
   @override
@@ -129,7 +168,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                       Container(
                         height: 100,
                         child: Image.asset(
-                          "assets/icon/logo.png",
+                          'assets/icon/logo.png',
                         ),
                       ),
                     ]),
@@ -157,8 +196,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               controller: nameController,
                               decoration: textInputDecoration.copyWith(
                                   hintText: 'Name'),
-                              validator:
-                                  RequiredValidator(errorText: 'Entrer a name'),
+                              validator: nameValidator,
                             ),
                           )
                         : Container(),
@@ -170,8 +208,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         controller: emailController,
                         decoration:
                             textInputDecoration.copyWith(hintText: 'Email'),
-                        validator:
-                            EmailValidator(errorText: "Enter a valid email"),
+                        validator: emailValidator,
                       ),
                     ),
                     SizedBox(height: 30.0),
@@ -191,19 +228,18 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             borderRadius: BorderRadius.circular(14),
                             child: TextFormField(
                               enableInteractiveSelection: false,
-                              controller: ageController,
+                              // controller: ageController,
                               decoration: InputDecoration(
                                 labelText: 'Date of birth',
                                 icon: Icon(Icons.calendar_today),
                               ),
-                              validator: (value) =>
-                                  value == null || value.isEmpty
-                                      ? "Choose date"
-                                      : null,
+                              validator: dateValidator,
                               onTap: () {
-                                FocusScope.of(context).requestFocus(
-                                    new FocusNode()); // permet de ne pas afficher le clavier
-                                _selectDate(context);
+                                setState(() {
+                                  FocusScope.of(context).requestFocus(
+                                      new FocusNode()); // permet de ne pas afficher le clavier
+                                  _selectDate(context);
+                                });
                               },
                             ),
                           )
@@ -224,11 +260,11 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             // Expanded() permet de pas dépasser l'espace du telephone
                             Expanded(
                               child: Text(
-                                "I accept general conditions",
+                                'I accept general conditions',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
-                                    fontFamily: "Raleway"),
+                                    fontFamily: 'Raleway'),
                               ),
                             )
                           ])
@@ -247,11 +283,11 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             ),
                           ),
                           icon: Text(
-                            "Next",
+                            'Next',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20.0,
-                                fontFamily: "Raleway"),
+                                fontFamily: 'Raleway'),
                           ),
                           label: Icon(
                             Icons.east,
@@ -264,17 +300,26 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               var password = passwordController.value.text;
                               var email = emailController.value.text;
                               var name = nameController.value.text;
-                              var age = ageController.value.text;
-
+                              var age = selectedDate;
+                              print(age);
+                              var country = "";
+                              var description = "";
+                              var image = "";
                               dynamic result = showSignIn
                                   ? await _auth.signInWithEmailAndPassword(
                                       email, password)
                                   : await _auth.registerWithEmailAndPassword(
-                                      name, email, password, age);
+                                      name,
+                                      email,
+                                      password,
+                                      age,
+                                      country,
+                                      description,
+                                      image);
                               if (result == null) {
                                 setState(() {
                                   loading = false;
-                                  error = 'Please supply a valid email';
+                                  error = 'Email or password are not correct';
                                 });
                               }
                             }
@@ -287,24 +332,24 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         ? Column(
                             children: [
                               Text(
-                                "Already registered ?",
+                                'Already registered ?',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
-                                    fontFamily: "Raleway"),
+                                    fontFamily: 'Raleway'),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Log in",
+                                    'Log in',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16.0,
-                                        fontFamily: "Raleway"),
+                                        fontFamily: 'Raleway'),
                                   ),
                                   TextButton(
-                                    child: Text("RIGHT HERE !",
+                                    child: Text('RIGHT HERE !',
                                         style: TextStyle(
                                             color: Color.fromRGBO(
                                                 254, 209, 72, 1))),
@@ -315,7 +360,22 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             ],
                           )
                         : Container(),
-
+                    showSignIn
+                        ? Column(children: [
+                            TextButton(
+                              child: Text(
+                                'Forgot password ?',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontFamily: 'Raleway'),
+                              ),
+                              onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => ResetScreen())),
+                            ),
+                          ])
+                        : Container(),
                     SizedBox(height: 10.0),
                     Text(
                       error,

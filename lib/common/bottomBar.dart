@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:novalinguo/screens/home/bienvenue_screen.dart';
 import 'package:novalinguo/screens/home/home_screen.dart';
-import 'package:novalinguo/screens/home/profils2_screen.dart';
+import 'package:novalinguo/screens/home/profil_screen.dart';
 import 'package:novalinguo/screens/home/tchatArriere_screen.dart';
-import 'package:novalinguo/screens/home/user_list.dart';
 
 // Création du Bouton d'Aceuil
 class FloatingButton extends StatelessWidget {
@@ -54,7 +52,7 @@ class BottomNavigation extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Profils2(),
+                    builder: (context) => ProfilScreen(),
                   ),
                 );
               },
