@@ -12,7 +12,7 @@ class ProfilScreen extends StatefulWidget {
 
 class _ProfilScreenState extends State<ProfilScreen> {
   final UserService userSevice = UserService();
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final countryController = TextEditingController();
   final descriptionController = TextEditingController();
 
@@ -33,30 +33,30 @@ class _ProfilScreenState extends State<ProfilScreen> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(41, 42, 75, 1),
       body: Container(
-        margin: EdgeInsets.all(20),
+        padding: EdgeInsets.symmetric(vertical: 70.0, horizontal: 30.0),
         alignment: Alignment.center,
         child: Column(
           children: [
             Form(
-                key: formKey,
-                child: ListView(
+                key: _formKey,
+                child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 16, left: 16, right: 16, bottom: 0),
+                    SizedBox(height: 20.0),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
                       child: TextFormField(
                           controller: countryController,
                           decoration:
                               textInputDecoration.copyWith(hintText: 'Country'),
                           validator: countryValidator),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 16, left: 16, right: 16, bottom: 0),
+                    SizedBox(height: 20.0),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
                       child: TextFormField(
                           controller: descriptionController,
-                          decoration:
-                              textInputDecoration.copyWith(hintText: 'Country'),
+                          decoration: textInputDecoration.copyWith(
+                              hintText: 'Description'),
                           keyboardType: TextInputType.multiline,
                           minLines: 3,
                           maxLines: 6,
@@ -64,25 +64,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     ),
                   ],
                 )),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                height: 50,
-                width: 270,
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "General conditions",
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ),
-            ),
             SizedBox(height: 20.0),
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
@@ -138,6 +119,40 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.white,
                   ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                height: 50,
+                width: 170,
+                child: ElevatedButton.icon(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Color.fromRGBO(131, 133, 238, 1),
+                    ),
+                  ),
+                  icon: Text(
+                    'Next',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontFamily: 'Raleway'),
+                  ),
+                  label: Icon(
+                    Icons.east,
+                    color: Colors.black,
+                    size: 40.0,
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState?.validate() == true) {
+                      // var country = countryController.value.text;
+                      // var description = descriptionController.value.text;
+
+                    }
+                  },
                 ),
               ),
             ),
