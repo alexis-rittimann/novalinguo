@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:novalinguo/common/bottomBar.dart';
+import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/screens/authenticate/authenticate_screen.dart';
 import 'package:novalinguo/services/user.dart';
 
@@ -10,7 +12,23 @@ class ProfilScreen extends StatefulWidget {
 
 class _ProfilScreenState extends State<ProfilScreen> {
   final UserService userSevice = UserService();
+  final formKey = GlobalKey<FormState>();
+  final countryController = TextEditingController();
+  final descriptionController = TextEditingController();
 
+  final countryValidator = MultiValidator([
+    RequiredValidator(errorText: 'Enter country'),
+    PatternValidator(r'[a-zA-Z]+', errorText: 'Name cannot have digits')
+  ]);
+
+  @override
+  void dispose() {
+    countryController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(41, 42, 75, 1),
@@ -19,6 +37,33 @@ class _ProfilScreenState extends State<ProfilScreen> {
         alignment: Alignment.center,
         child: Column(
           children: [
+            Form(
+                key: formKey,
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 16, left: 16, right: 16, bottom: 0),
+                      child: TextFormField(
+                          controller: countryController,
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'Country'),
+                          validator: countryValidator),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 16, left: 16, right: 16, bottom: 0),
+                      child: TextFormField(
+                          controller: descriptionController,
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'Country'),
+                          keyboardType: TextInputType.multiline,
+                          minLines: 3,
+                          maxLines: 6,
+                          validator: countryValidator),
+                    ),
+                  ],
+                )),
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: SizedBox(
