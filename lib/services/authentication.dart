@@ -34,7 +34,7 @@ class AuthenticationService {
       String name,
       String email,
       String password,
-      DateTime age,
+      String age,
       String? country,
       String? description,
       String? image) async {
