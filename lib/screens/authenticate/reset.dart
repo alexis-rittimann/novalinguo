@@ -40,12 +40,6 @@ class _ResetScreenState extends State<ResetScreen> {
         errorText: 'Password must have at least one special character')
   ]);
 
-  final nameValidator = MultiValidator([
-    RequiredValidator(errorText: 'Enter a name'),
-    MaxLengthValidator(20, errorText: 'Name is too long'),
-    PatternValidator(r'[a-zA-Z]+', errorText: 'Name cannot have digits')
-  ]);
-
   final emailValidator = MultiValidator([
     RequiredValidator(errorText: 'Enter an email'),
     EmailValidator(errorText: 'Enter a valid email'),

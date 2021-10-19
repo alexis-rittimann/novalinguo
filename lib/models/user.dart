@@ -7,7 +7,7 @@ class AppUser {
 class AppUserData {
   final String uid;
   final String name;
-  final String age;
+  final DateTime age;
   final String? country;
   final String? image;
   final String? description;

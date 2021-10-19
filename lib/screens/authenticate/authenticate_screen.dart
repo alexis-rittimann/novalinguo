@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/common/loading.dart';
 import 'package:novalinguo/screens/authenticate/reset.dart';
@@ -22,7 +24,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
-  // final ageController = DateTime.now();
+  final ageController = TextEditingController();
   bool showSignIn = true; //permet de switcher de formulaire
   DateTime selectedDate = DateTime.now();
 
@@ -54,35 +56,39 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
           );
         });
 
-    if (picked != null && picked != selectedDate)
-      setState(() {
-        selectedDate = picked;
-        // if (isAdult(selectedDate)!) {
+    if (picked != null && picked != selectedDate) {
+      selectedDate = picked;
+      String formattedDate = DateFormat('dd-MM-yyyy').format(selectedDate);
+      if (isAdult(formattedDate)!) {
+        setState(() {
+          ageController.text = formattedDate.toString();
+        });
         // var date =
         //     '${picked.toLocal().day}/${picked.toLocal().month}/${picked.toLocal().year}';
         // Timestamp DatetoTimeStamp = Timestamp.fromDate(selectedDate);
 
-        // ageController.text = date; // la variable date est envoyé à firestore
-        // }
-      });
+        // selectedDate = selectedDate.toString(); // la variable date est envoyé à firestore
+      }
+    }
   }
 
-  // bool? isAdult(selectedDate) {
-  //   String datePattern = "dd-MM-yyyy";
-  //   DateTime today = DateTime.now();
-  //   DateTime birthDate = DateFormat(datePattern).parse(selectedDate);
-  //   // Date check
-  //   DateTime adultDate = DateTime(
-  //     birthDate.year + 16,
-  //     birthDate.month,
-  //     birthDate.day,
-  //   );
+  bool? isAdult(formattedDate) {
+    DateTime today = DateTime.now();
+    DateTime birthDate = DateFormat('dd-MM-yyyy').parse(formattedDate);
+    ;
+    // Date check
+    DateTime adultDate = DateTime(
+      birthDate.year + 16,
+      birthDate.month,
+      birthDate.day,
+    );
 
-  //   if (adultDate.isAfter(today))
-  //     error = "You need to be at least 16 years old";
+    if (adultDate.isAfter(today)) {
+      error = "16 yo";
+    }
 
-  //   return adultDate.isBefore(today);
-  // }
+    return adultDate.isBefore(today);
+  }
 
   void toggleView() {
     //permet de changer le showSignIn et rendre le form propre
@@ -92,16 +98,20 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
       emailController.text = '';
       nameController.text = '';
       passwordController.text = '';
-      // ageController.text = '';
+      ageController.text = '';
       showSignIn = !showSignIn;
     });
   }
 
-  final passwordValidator = MultiValidator([
+  final passwordValidatorSignUp = MultiValidator([
     RequiredValidator(errorText: 'Enter a password'),
     MinLengthValidator(8, errorText: 'Password must be at least 8 digits long'),
-    PatternValidator(r'(?=.*?[#?!@$%^&*-])',
+    PatternValidator(r'(?=.*?[#?!@$%^&*-.])',
         errorText: 'Password must have at least one special character')
+  ]);
+
+  final passwordValidatorSignIn = MultiValidator([
+    RequiredValidator(errorText: 'Enter a password'),
   ]);
 
   final nameValidator = MultiValidator([
@@ -219,7 +229,9 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                         decoration:
                             textInputDecoration.copyWith(hintText: 'Password'),
                         obscureText: true,
-                        validator: passwordValidator,
+                        validator: !showSignIn
+                            ? passwordValidatorSignUp
+                            : passwordValidatorSignIn,
                       ),
                     ),
                     SizedBox(height: 30.0),
@@ -228,18 +240,18 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                             borderRadius: BorderRadius.circular(14),
                             child: TextFormField(
                               enableInteractiveSelection: false,
-                              // controller: ageController,
+                              controller: ageController,
                               decoration: InputDecoration(
                                 labelText: 'Date of birth',
                                 icon: Icon(Icons.calendar_today),
                               ),
                               validator: dateValidator,
                               onTap: () {
-                                setState(() {
-                                  FocusScope.of(context).requestFocus(
-                                      new FocusNode()); // permet de ne pas afficher le clavier
-                                  _selectDate(context);
-                                });
+                                // setState(() {
+                                FocusScope.of(context).requestFocus(
+                                    new FocusNode()); // permet de ne pas afficher le clavier
+                                _selectDate(context);
+                                // });
                               },
                             ),
                           )
@@ -300,7 +312,8 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               var password = passwordController.value.text;
                               var email = emailController.value.text;
                               var name = nameController.value.text;
-                              var age = selectedDate;
+                              var age =
+                                  DateTime.parse(ageController.value.text);
                               print(age);
                               var country = "";
                               var description = "";
