@@ -9,7 +9,7 @@ class DatabaseService {
   final CollectionReference<Map<String, dynamic>> userCollection =
       FirebaseFirestore.instance.collection("users");
 
-  Future<void> saveUser(String name, DateTime age, String? country,
+  Future<void> saveUser(String name, String age, String? country,
       String? description, String? image) async {
     return await userCollection.doc(uid).set({
       'name': name,

@@ -33,7 +33,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
-    // ageController.dispose();
+    ageController.dispose();
     super.dispose();
   }
 
@@ -57,38 +57,40 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
         });
 
     if (picked != null && picked != selectedDate) {
-      selectedDate = picked;
-      String formattedDate = DateFormat('dd-MM-yyyy').format(selectedDate);
-      if (isAdult(formattedDate)!) {
-        setState(() {
-          ageController.text = formattedDate.toString();
-        });
-        // var date =
-        //     '${picked.toLocal().day}/${picked.toLocal().month}/${picked.toLocal().year}';
-        // Timestamp DatetoTimeStamp = Timestamp.fromDate(selectedDate);
+      // String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+      // if (isAdult(formattedDate)!) {
+      setState(() {
+        // ageController.text = formattedDate.toString();
+        selectedDate = picked;
 
-        // selectedDate = selectedDate.toString(); // la variable date est envoyé à firestore
-      }
+        ageController.text = selectedDate.toString();
+      });
+      // var date =
+      //     '${picked.toLocal().day}/${picked.toLocal().month}/${picked.toLocal().year}';
+      // Timestamp DatetoTimeStamp = Timestamp.fromDate(selectedDate);
+
+      // selectedDate = selectedDate.toString(); // la variable date est envoyé à firestore
+      // }
     }
   }
 
-  bool? isAdult(formattedDate) {
-    DateTime today = DateTime.now();
-    DateTime birthDate = DateFormat('dd-MM-yyyy').parse(formattedDate);
-    ;
-    // Date check
-    DateTime adultDate = DateTime(
-      birthDate.year + 16,
-      birthDate.month,
-      birthDate.day,
-    );
+  // bool? isAdult(formattedDate) {
+  //   DateTime today = DateTime.now();
+  //   DateTime birthDate = DateFormat('dd-MM-yyyy').parse(formattedDate);
+  //   ;
+  //   // Date check
+  //   DateTime adultDate = DateTime(
+  //     birthDate.year + 16,
+  //     birthDate.month,
+  //     birthDate.day,
+  //   );
 
-    if (adultDate.isAfter(today)) {
-      error = "16 yo";
-    }
+  //   if (adultDate.isAfter(today)) {
+  //     error = "16 yo";
+  //   }
 
-    return adultDate.isBefore(today);
-  }
+  //   return adultDate.isBefore(today);
+  // }
 
   void toggleView() {
     //permet de changer le showSignIn et rendre le form propre
@@ -247,11 +249,9 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               ),
                               validator: dateValidator,
                               onTap: () {
-                                // setState(() {
                                 FocusScope.of(context).requestFocus(
                                     new FocusNode()); // permet de ne pas afficher le clavier
                                 _selectDate(context);
-                                // });
                               },
                             ),
                           )
@@ -312,9 +312,9 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               var password = passwordController.value.text;
                               var email = emailController.value.text;
                               var name = nameController.value.text;
-                              var age =
-                                  DateTime.parse(ageController.value.text);
-                              print(age);
+                              // var age =
+                              //     DateTime.parse(ageController.value.text);
+                              var age = ageController.value.text;
                               var country = "";
                               var description = "";
                               var image = "";
