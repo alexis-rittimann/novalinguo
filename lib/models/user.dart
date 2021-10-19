@@ -11,11 +11,13 @@ class AppUserData {
   final String? country;
   final String? image;
   final String? description;
+  final bool isConnected;
 
   AppUserData({
     required this.uid,
     required this.name,
     required this.age,
+    required this.isConnected,
     this.image,
     this.country,
     this.description,

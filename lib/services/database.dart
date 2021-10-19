@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/rendering.dart';
 import 'package:novalinguo/models/user.dart';
 
 class DatabaseService {
+  final currentUser = FirebaseAuth.instance.currentUser;
+
   final String uid;
 
   DatabaseService(this.uid);
@@ -10,14 +14,19 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("users");
 
   Future<void> saveUser(String name, String age, String? country,
-      String? description, String? image) async {
+      String? description, String? image, bool isConnected) async {
     return await userCollection.doc(uid).set({
       'name': name,
       'age': age,
       'description': description,
       'country': country,
       'image': image,
+      'isConnected': isConnected
     });
+  }
+
+  Future<void> connectToChat() async {
+    return await userCollection.doc(uid).update({'isConnected': true});
   }
 
   AppUserData _userFromSnapshot(
@@ -25,13 +34,13 @@ class DatabaseService {
     var data = snapshot.data();
     if (data == null) throw Exception("user not found");
     return AppUserData(
-      uid: snapshot.id,
-      name: data['name'],
-      age: data['age'],
-      country: data['country'],
-      description: data['description'],
-      image: data['image'],
-    );
+        uid: snapshot.id,
+        name: data['name'],
+        age: data['age'],
+        country: data['country'],
+        description: data['description'],
+        image: data['image'],
+        isConnected: data['isConnected']);
   }
 
   Stream<AppUserData> get user {
