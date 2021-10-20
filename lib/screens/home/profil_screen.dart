@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:novalinguo/common/bottomBar.dart';
 import 'package:novalinguo/common/constants.dart';
+import 'package:novalinguo/models/user.dart';
 import 'package:novalinguo/screens/authenticate/authenticate_screen.dart';
+import 'package:novalinguo/services/database.dart';
 import 'package:novalinguo/services/user.dart';
+import 'package:provider/provider.dart';
 
 class ProfilScreen extends StatefulWidget {
   @override
@@ -30,6 +33,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<AppUser?>(context);
+    final DatabaseService databaseService = DatabaseService(currentUser!.uid);
     return Scaffold(
       backgroundColor: Color.fromRGBO(41, 42, 75, 1),
       body: Container(
@@ -37,6 +42,24 @@ class _ProfilScreenState extends State<ProfilScreen> {
         alignment: Alignment.center,
         child: Column(
           children: [
+            SizedBox(height: 30.0),
+            Stack(
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    vertical: 30,
+                    horizontal: 30,
+                  ),
+                  child: CircleAvatar(
+                    radius: 71,
+                    backgroundColor: Colors.grey,
+                    child: CircleAvatar(
+                      radius: 68,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             Form(
                 key: _formKey,
                 child: Column(
@@ -135,7 +158,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     ),
                   ),
                   icon: Text(
-                    'Next',
+                    'Save',
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 20.0,
@@ -148,9 +171,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState?.validate() == true) {
-                      // var country = countryController.value.text;
-                      // var description = descriptionController.value.text;
+                      var country = countryController.value.text;
+                      var description = descriptionController.value.text;
+                      var image = "";
 
+                      databaseService.profilUpdate(country, description, image);
                     }
                   },
                 ),

@@ -9,7 +9,6 @@ import 'package:novalinguo/common/loading.dart';
 import 'package:novalinguo/models/chat_params.dart';
 import 'package:novalinguo/models/message.dart';
 import 'package:novalinguo/services/message_database.dart';
-
 import 'message_item.dart';
 
 class Chat extends StatefulWidget {

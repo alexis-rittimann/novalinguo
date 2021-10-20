@@ -29,6 +29,15 @@ class DatabaseService {
     return await userCollection.doc(uid).update({'isConnected': true});
   }
 
+  Future<void> profilUpdate(
+      String? country, String? description, String? image) async {
+    return await userCollection.doc(uid).update({
+      'description': description,
+      'country': country,
+      'image': image,
+    });
+  }
+
   AppUserData _userFromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     var data = snapshot.data();
