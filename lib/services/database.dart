@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/rendering.dart';
@@ -25,8 +27,12 @@ class DatabaseService {
     });
   }
 
-  Future<void> connectToChat() async {
-    return await userCollection.doc(uid).update({'isConnected': true});
+  Future getRandomUserForChat() async {
+    // Map collectionSorted;
+    await userCollection.doc(uid).update({'isConnected': true});
+    final collection =
+        await userCollection.where("isConnected", isEqualTo: true);
+    return collection;
   }
 
   Future<void> profilUpdate(

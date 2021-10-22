@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:novalinguo/common/bottomBar.dart';
@@ -18,7 +21,8 @@ class _UserListState extends State<UserList> {
     final users = Provider.of<List<AppUserData>>(context);
     // final user = Provider.of<User?>(context);
     final currentUser = Provider.of<AppUser?>(context);
-    final DatabaseService databaseService = DatabaseService(currentUser!.uid);
+    if (currentUser == null) throw Exception("current user not found");
+    final DatabaseService databaseService = DatabaseService(currentUser.uid);
     return Scaffold(
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 300.0, horizontal: 30.0),
@@ -49,7 +53,21 @@ class _UserListState extends State<UserList> {
                     size: 40.0,
                   ),
                   onPressed: () async {
-                    databaseService.connectToChat();
+                    Query<Map<String, dynamic>> userList =
+                        await databaseService.getRandomUserForChat();
+                    userList.get().then((querySnapshot) {
+                      List usersId = querySnapshot.docs
+                          .map((result) => result.id)
+                          .toList();
+                      var randomUser = (usersId..shuffle()).first;
+                      if (currentUser.uid == randomUser)
+                        return; // verification si l'id de randomUser est pas égal à currentUser
+                      Navigator.pushNamed(
+                        context,
+                        '/chat',
+                        arguments: ChatParams(currentUser.uid, randomUser),
+                      );
+                    });
                   },
                 ),
               ),
@@ -67,34 +85,34 @@ class _UserListState extends State<UserList> {
   }
 }
 
-class UserTile extends StatelessWidget {
-  final AppUserData user;
-  UserTile(this.user);
+// class UserTile extends StatelessWidget {
+//   final AppUserData user;
+//   UserTile(this.user);
 
-  @override
-  Widget build(BuildContext context) {
-    final currentUser = Provider.of<AppUser?>(context);
-    if (currentUser == null) throw Exception("current user not found");
-    return GestureDetector(
-        onTap: () {
-          if (currentUser.uid == user.uid || user.isConnected == false)
-            return; // verification si l'utilisateur a appuié sur le bouton et si uid est pas égale à currentUser
-          Navigator.pushNamed(
-            context,
-            '/chat',
-            arguments: ChatParams(currentUser.uid, user),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Card(
-            margin: EdgeInsets.only(
-                top: 12.0, bottom: 6.0, left: 20.0, right: 20.0),
-            child: ListTile(
-              title: Text(user.name),
-              subtitle: Text('il est trop chaud pour ${user.age} ans'),
-            ),
-          ),
-        ));
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final currentUser = Provider.of<AppUser?>(context);
+//     if (currentUser == null) throw Exception("current user not found");
+//     return GestureDetector(
+//         onTap: () {
+//           if (currentUser.uid == user.uid || user.isConnected == false)
+//             return; // verification si l'utilisateur a appuié sur le bouton et si uid est pas égale à currentUser
+//           Navigator.pushNamed(
+//             context,
+//             '/chat',
+//             arguments: ChatParams(currentUser.uid, user),
+//           );
+//         },
+//         child: Padding(
+//           padding: const EdgeInsets.only(top: 8.0),
+//           child: Card(
+//             margin: EdgeInsets.only(
+//                 top: 12.0, bottom: 6.0, left: 20.0, right: 20.0),
+//             child: ListTile(
+//               title: Text(user.name),
+//               subtitle: Text('il est trop chaud pour ${user.age} ans'),
+//             ),
+//           ),
+//         ));
+//   }
+// }
