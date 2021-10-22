@@ -2,15 +2,15 @@ import 'package:novalinguo/models/user.dart';
 
 class ChatParams {
   final String userUid;
-  final AppUserData peer;
+  final String peer;
 
   ChatParams(this.userUid, this.peer);
 
   String getChatGroupId() {
-    if (userUid.hashCode <= peer.uid.hashCode) {
-      return '$userUid-${peer.uid}';
+    if (userUid.hashCode <= peer.hashCode) {
+      return '$userUid-${peer}';
     } else {
-      return '${peer.uid}-$userUid';
+      return '${peer}-$userUid';
     }
   }
 }

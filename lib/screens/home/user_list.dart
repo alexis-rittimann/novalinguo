@@ -19,7 +19,7 @@ class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
     final users = Provider.of<List<AppUserData>>(context);
-    // final user = Provider.of<User?>(context);
+    // final user = Provider.of<AppUserData>(context);
     final currentUser = Provider.of<AppUser?>(context);
     if (currentUser == null) throw Exception("current user not found");
     final DatabaseService databaseService = DatabaseService(currentUser.uid);
@@ -59,13 +59,15 @@ class _UserListState extends State<UserList> {
                       List usersId = querySnapshot.docs
                           .map((result) => result.id)
                           .toList();
-                      var randomUser = (usersId..shuffle()).first;
-                      if (currentUser.uid == randomUser)
-                        return; // verification si l'id de randomUser est pas égal à currentUser
+                      var randomUserId = (usersId..shuffle()).last;
+                      if (currentUser.uid == randomUserId) {
+                        print("same user !");
+                        return;
+                      }
                       Navigator.pushNamed(
                         context,
                         '/chat',
-                        arguments: ChatParams(currentUser.uid, randomUser),
+                        arguments: ChatParams(currentUser.uid, randomUserId),
                       );
                     });
                   },

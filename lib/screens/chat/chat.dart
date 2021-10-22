@@ -277,7 +277,7 @@ class _ChatState extends State<Chat> {
           chatParams.getChatGroupId(),
           Message(
               idFrom: chatParams.userUid,
-              idTo: chatParams.peer.uid,
+              idTo: chatParams.peer,
               timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
               content: content,
               type: type));
