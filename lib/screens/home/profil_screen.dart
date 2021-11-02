@@ -1,5 +1,11 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:novalinguo/common/bottomBar.dart';
 import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/models/user.dart';
@@ -18,10 +24,51 @@ class _ProfilScreenState extends State<ProfilScreen> {
   final _formKey = GlobalKey<FormState>();
   final countryController = TextEditingController();
   final descriptionController = TextEditingController();
+  bool isLoading = false;
+  String profileImage = "";
+
+  Future getImage() async {
+    ImagePicker imagePicker = ImagePicker();
+    PickedFile? pickedFile =
+        await imagePicker.getImage(source: ImageSource.gallery);
+    if (pickedFile == null) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+    uploadFile(pickedFile);
+  }
+
+  Future uploadFile(PickedFile? file) async {
+    String fileName =
+        DateTime.now().millisecondsSinceEpoch.toString() + ".jpeg";
+    try {
+      Reference reference = FirebaseStorage.instance.ref().child(fileName);
+      final metadata = SettableMetadata(
+          contentType: 'image/jpeg',
+          customMetadata: {'picked-file-path': file!.path});
+      TaskSnapshot snapshot =
+          await reference.putFile(File(file.path), metadata);
+      String imageUrl = await snapshot.ref.getDownloadURL();
+      setState(() {
+        profileImage = imageUrl;
+        print("hello profileImage" + profileImage);
+      });
+    } on Exception {
+      setState(() {
+        isLoading = false;
+      });
+      Fluttertoast.showToast(msg: "An error is occured");
+    }
+  }
 
   final countryValidator = MultiValidator([
-    RequiredValidator(errorText: 'Enter country'),
-    PatternValidator(r'[a-zA-Z]+', errorText: 'Name cannot have digits')
+    PatternValidator(r'[a-zA-Z]+', errorText: 'Country cannot have digits')
+  ]);
+
+  final descriptionValidator = MultiValidator([
+    PatternValidator(r'[a-zA-Z]+', errorText: 'Description cannot have digits'),
+    MaxLengthValidator(30, errorText: 'Description is too long')
   ]);
 
   @override
@@ -50,11 +97,15 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     vertical: 30,
                     horizontal: 30,
                   ),
-                  child: CircleAvatar(
-                    radius: 71,
-                    backgroundColor: Colors.grey,
+                  child: GestureDetector(
+                    onTap: getImage,
                     child: CircleAvatar(
-                      radius: 68,
+                      radius: 71,
+                      backgroundColor: Colors.grey,
+                      child: Image.network(profileImage),
+                      // child: CircleAvatar(
+                      //   radius: 68,
+                      // ),
                     ),
                   ),
                 ),
@@ -83,7 +134,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           keyboardType: TextInputType.multiline,
                           minLines: 3,
                           maxLines: 6,
-                          validator: countryValidator),
+                          validator: descriptionValidator),
                     ),
                   ],
                 )),
@@ -173,7 +224,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     if (_formKey.currentState?.validate() == true) {
                       var country = countryController.value.text;
                       var description = descriptionController.value.text;
-                      var image = "";
+                      var image = profileImage;
 
                       databaseService.profilUpdate(country, description, image);
                     }
