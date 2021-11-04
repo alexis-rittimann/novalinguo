@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
   final descriptionController = TextEditingController();
   bool isLoading = false;
   String profileImage = "";
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
 
   Future getImage() async {
     ImagePicker imagePicker = ImagePicker();
@@ -82,158 +85,172 @@ class _ProfilScreenState extends State<ProfilScreen> {
   Widget build(BuildContext context) {
     final currentUser = Provider.of<AppUser?>(context);
     final DatabaseService databaseService = DatabaseService(currentUser!.uid);
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: Color.fromRGBO(41, 42, 75, 1),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 70.0, horizontal: 30.0),
         alignment: Alignment.center,
-        child: Column(
-          children: [
-            SizedBox(height: 30.0),
-            Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    vertical: 30,
-                    horizontal: 30,
+        child: StreamBuilder<DocumentSnapshot>(
+            stream: usersCollection.doc(user!.uid).snapshots(),
+            builder: (ctx, streamSnapshot) {
+              if (streamSnapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.blue,
                   ),
-                  child: GestureDetector(
-                    onTap: getImage,
-                    child: CircleAvatar(
-                      radius: 71,
-                      backgroundColor: Colors.grey,
-                      child: Image.network(profileImage),
-                      // child: CircleAvatar(
-                      //   radius: 68,
-                      // ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SizedBox(height: 20.0),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: TextFormField(
-                          controller: countryController,
-                          decoration:
-                              textInputDecoration.copyWith(hintText: 'Country'),
-                          validator: countryValidator),
-                    ),
-                    SizedBox(height: 20.0),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: TextFormField(
-                          controller: descriptionController,
-                          decoration: textInputDecoration.copyWith(
-                              hintText: 'Description'),
-                          keyboardType: TextInputType.multiline,
-                          minLines: 3,
-                          maxLines: 6,
-                          validator: descriptionValidator),
-                    ),
-                  ],
-                )),
-            SizedBox(height: 20.0),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                height: 50,
-                width: 270,
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Need help ?",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                height: 50,
-                width: 270,
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Sign out",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                height: 50,
-                width: 270,
-                child: TextButton(
-                  onPressed: () async {
-                    await userSevice.deleteUser();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => AuthenticateScreen()));
-                  },
-                  child: Text(
-                    "Delete account",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
-                height: 50,
-                width: 170,
-                child: ElevatedButton.icon(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                      Color.fromRGBO(131, 133, 238, 1),
-                    ),
-                  ),
-                  icon: Text(
-                    'Save',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.0,
-                        fontFamily: 'Raleway'),
-                  ),
-                  label: Icon(
-                    Icons.east,
-                    color: Colors.black,
-                    size: 40.0,
-                  ),
-                  onPressed: () async {
-                    if (_formKey.currentState?.validate() == true) {
-                      var country = countryController.value.text;
-                      var description = descriptionController.value.text;
-                      var image = profileImage;
+                );
+              }
+              return Column(
+                children: [
+                  SizedBox(height: 30.0),
+                  Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          vertical: 30,
+                          horizontal: 30,
+                        ),
+                        child: GestureDetector(
+                          onTap: getImage,
+                          child: CircleAvatar(
+                            radius: 71,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: streamSnapshot.data!['image'] !=
+                                    'Image goes here'
+                                ? NetworkImage(streamSnapshot.data!['image'])
+                                : null,
+                          ),
+                        ),
+                      ),
+                      Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20.0),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(14),
+                                child: TextFormField(
+                                    controller: countryController,
+                                    decoration: textInputDecoration.copyWith(
+                                        hintText: 'Country'),
+                                    validator: countryValidator),
+                              ),
+                              SizedBox(height: 20.0),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(14),
+                                child: TextFormField(
+                                    controller: descriptionController,
+                                    decoration: textInputDecoration.copyWith(
+                                        hintText: 'Description'),
+                                    keyboardType: TextInputType.multiline,
+                                    minLines: 3,
+                                    maxLines: 6,
+                                    validator: descriptionValidator),
+                              ),
+                            ],
+                          )),
+                      SizedBox(height: 20.0),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: SizedBox(
+                          height: 50,
+                          width: 270,
+                          child: TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              "Need help ?",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: SizedBox(
+                          height: 50,
+                          width: 270,
+                          child: TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              "Sign out",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: SizedBox(
+                          height: 50,
+                          width: 270,
+                          child: TextButton(
+                            onPressed: () async {
+                              await userSevice.deleteUser();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => AuthenticateScreen()));
+                            },
+                            child: Text(
+                              "Delete account",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: SizedBox(
+                          height: 50,
+                          width: 170,
+                          child: ElevatedButton.icon(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                Color.fromRGBO(131, 133, 238, 1),
+                              ),
+                            ),
+                            icon: Text(
+                              'Save',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  fontFamily: 'Raleway'),
+                            ),
+                            label: Icon(
+                              Icons.east,
+                              color: Colors.black,
+                              size: 40.0,
+                            ),
+                            onPressed: () async {
+                              if (_formKey.currentState?.validate() == true) {
+                                var country = countryController.value.text;
+                                var description =
+                                    descriptionController.value.text;
+                                var image = profileImage;
 
-                      databaseService.profilUpdate(country, description, image);
-                    }
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
+                                databaseService.profilUpdate(
+                                    country, description, image);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }),
       ),
       floatingActionButton: FloatingButton(),
       bottomNavigationBar: BottomNavigation(),
@@ -244,3 +261,164 @@ class _ProfilScreenState extends State<ProfilScreen> {
     );
   }
 }
+   
+    //     child: Column(
+    //       children: [
+    //         SizedBox(height: 30.0),
+    //         Stack(
+    //           children: [
+    //             Container(
+    //               margin: EdgeInsets.symmetric(
+    //                 vertical: 30,
+    //                 horizontal: 30,
+    //               ),
+    //               child: GestureDetector(
+    //                 onTap: getImage,
+    //                 child: CircleAvatar(
+    //                   radius: 71,
+    //                   backgroundColor: Colors.grey,
+
+    //                   // backgroundImage: profileImage.isNotEmpty
+    //                   //     ? NetworkImage(profileImage)
+    //                   //     : null,
+    //                   // child: Image.network(profileImage),
+    //                   // child: CircleAvatar(
+    //                   //   radius: 68,
+    //                   // ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         Form(
+    //             key: _formKey,
+    //             child: Column(
+    //               children: [
+    //                 SizedBox(height: 20.0),
+    //                 ClipRRect(
+    //                   borderRadius: BorderRadius.circular(14),
+    //                   child: TextFormField(
+    //                       controller: countryController,
+    //                       decoration:
+    //                           textInputDecoration.copyWith(hintText: 'Country'),
+    //                       validator: countryValidator),
+    //                 ),
+    //                 SizedBox(height: 20.0),
+    //                 ClipRRect(
+    //                   borderRadius: BorderRadius.circular(14),
+    //                   child: TextFormField(
+    //                       controller: descriptionController,
+    //                       decoration: textInputDecoration.copyWith(
+    //                           hintText: 'Description'),
+    //                       keyboardType: TextInputType.multiline,
+    //                       minLines: 3,
+    //                       maxLines: 6,
+    //                       validator: descriptionValidator),
+    //                 ),
+    //               ],
+    //             )),
+    //         SizedBox(height: 20.0),
+    //         ClipRRect(
+    //           borderRadius: BorderRadius.circular(10),
+    //           child: SizedBox(
+    //             height: 50,
+    //             width: 270,
+    //             child: TextButton(
+    //               onPressed: () {},
+    //               child: Text(
+    //                 "Need help ?",
+    //                 style: TextStyle(color: Colors.black),
+    //               ),
+    //               style: TextButton.styleFrom(
+    //                 backgroundColor: Colors.white,
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         SizedBox(height: 20.0),
+    //         ClipRRect(
+    //           borderRadius: BorderRadius.circular(10),
+    //           child: SizedBox(
+    //             height: 50,
+    //             width: 270,
+    //             child: TextButton(
+    //               onPressed: () {},
+    //               child: Text(
+    //                 "Sign out",
+    //                 style: TextStyle(color: Colors.black),
+    //               ),
+    //               style: TextButton.styleFrom(
+    //                 backgroundColor: Colors.white,
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         SizedBox(height: 20.0),
+    //         ClipRRect(
+    //           borderRadius: BorderRadius.circular(10),
+    //           child: SizedBox(
+    //             height: 50,
+    //             width: 270,
+    //             child: TextButton(
+    //               onPressed: () async {
+    //                 await userSevice.deleteUser();
+    //                 Navigator.of(context).push(MaterialPageRoute(
+    //                     builder: (context) => AuthenticateScreen()));
+    //               },
+    //               child: Text(
+    //                 "Delete account",
+    //                 style: TextStyle(color: Colors.black),
+    //               ),
+    //               style: TextButton.styleFrom(
+    //                 backgroundColor: Colors.white,
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         SizedBox(height: 20.0),
+    //         ClipRRect(
+    //           borderRadius: BorderRadius.circular(8),
+    //           child: SizedBox(
+    //             height: 50,
+    //             width: 170,
+    //             child: ElevatedButton.icon(
+    //               style: ButtonStyle(
+    //                 backgroundColor: MaterialStateProperty.all<Color>(
+    //                   Color.fromRGBO(131, 133, 238, 1),
+    //                 ),
+    //               ),
+    //               icon: Text(
+    //                 'Save',
+    //                 style: TextStyle(
+    //                     color: Colors.black,
+    //                     fontSize: 20.0,
+    //                     fontFamily: 'Raleway'),
+    //               ),
+    //               label: Icon(
+    //                 Icons.east,
+    //                 color: Colors.black,
+    //                 size: 40.0,
+    //               ),
+    //               onPressed: () async {
+    //                 if (_formKey.currentState?.validate() == true) {
+    //                   var country = countryController.value.text;
+    //                   var description = descriptionController.value.text;
+    //                   var image = profileImage;
+
+    //                   databaseService.profilUpdate(country, description, image);
+    //                 }
+    //               },
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    //   floatingActionButton: FloatingButton(),
+    //   bottomNavigationBar: BottomNavigation(),
+    //   // Je place ensuite le Bouton au millieu
+    //   floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    //   // Permet de voir les element de la page entre le bouton Acceuil et footerBar
+    //   extendBody: true,
+    // );
+  
