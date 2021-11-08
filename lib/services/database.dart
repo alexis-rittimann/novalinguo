@@ -14,15 +14,22 @@ class DatabaseService {
   final CollectionReference<Map<String, dynamic>> userCollection =
       FirebaseFirestore.instance.collection("users");
 
-  Future<void> saveUser(String name, String age, String? country,
-      String? description, String? image, bool isConnected) async {
+  Future<void> saveUser(
+      String name,
+      String age,
+      String? country,
+      String? description,
+      String? image,
+      bool isConnected,
+      bool isChatting) async {
     return await userCollection.doc(uid).set({
       'name': name,
       'age': age,
       'description': description,
       'country': country,
       'image': image,
-      'isConnected': isConnected
+      'isConnected': isConnected,
+      'isChatting': isChatting
     });
   }
 
@@ -32,6 +39,11 @@ class DatabaseService {
     final collection =
         await userCollection.where("isConnected", isEqualTo: true);
     return collection;
+  }
+
+  Future<void> setIsChatting(randomUserId) async {
+    await userCollection.doc(uid).update({'isConnected': false});
+    await userCollection.doc(randomUserId).update({'isConnected': false});
   }
 
   Future<void> profilUpdate(
@@ -54,7 +66,8 @@ class DatabaseService {
         country: data['country'],
         description: data['description'],
         image: data['image'],
-        isConnected: data['isConnected']);
+        isConnected: data['isConnected'],
+        isChatting: data['isChatting']);
   }
 
   Stream<AppUserData> get user {

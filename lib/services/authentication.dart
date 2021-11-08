@@ -38,7 +38,8 @@ class AuthenticationService {
       String? country,
       String? description,
       String? image,
-      bool isConnected) async {
+      bool isConnected,
+      bool isChatting) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -46,8 +47,8 @@ class AuthenticationService {
       if (user == null) {
         throw Exception("No user found");
       } else {
-        await DatabaseService(user.uid)
-            .saveUser(name, age, country, description, image, isConnected);
+        await DatabaseService(user.uid).saveUser(
+            name, age, country, description, image, isConnected, isChatting);
         try {
           user.sendEmailVerification();
           return user.uid;

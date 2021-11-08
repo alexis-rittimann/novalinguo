@@ -55,7 +55,7 @@ class _UserListState extends State<UserList> {
                   onPressed: () async {
                     Query<Map<String, dynamic>> userList =
                         await databaseService.getRandomUserForChat();
-                    userList.get().then((querySnapshot) {
+                    userList.get().then((querySnapshot) async {
                       List usersId = querySnapshot.docs
                           .map((result) => result.id)
                           .toList();
@@ -69,6 +69,7 @@ class _UserListState extends State<UserList> {
                         '/chat',
                         arguments: ChatParams(currentUser.uid, randomUserId),
                       );
+                      await databaseService.setIsChatting(randomUserId);
                     });
                   },
                 ),

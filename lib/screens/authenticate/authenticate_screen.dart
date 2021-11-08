@@ -319,6 +319,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               var description = "";
                               var image = "";
                               var isConnected = false;
+                              var isChatting = false;
                               dynamic result = showSignIn
                                   ? await _auth.signInWithEmailAndPassword(
                                       email, password)
@@ -330,7 +331,8 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                                       country,
                                       description,
                                       image,
-                                      isConnected);
+                                      isConnected,
+                                      isChatting);
                               if (result == null) {
                                 setState(() {
                                   loading = false;
