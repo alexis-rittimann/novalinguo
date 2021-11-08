@@ -101,151 +101,150 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   ),
                 );
               }
-              return Column(
+              return ListView(
                 children: [
                   SizedBox(height: 30.0),
+                  Row(children: [
+                    Text("My account",
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                    ClipRRect(
+                      child: TextButton(
+                        child: Icon(
+                          Icons.settings,
+                          color: Colors.white,
+                          size: 40.0,
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState?.validate() == true) {
+                            var country = countryController.value.text;
+                            var description = descriptionController.value.text;
+                            var image = profileImage;
+
+                            databaseService.profilUpdate(
+                                country, description, image);
+                          }
+                        },
+                      ),
+                    ),
+                  ]),
                   Column(
                     children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 30,
-                          horizontal: 30,
-                        ),
-                        child: GestureDetector(
-                          onTap: getImage,
-                          child: CircleAvatar(
-                            radius: 71,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: streamSnapshot.data!['image'] !=
-                                    'Image goes here'
-                                ? NetworkImage(streamSnapshot.data!['image'])
-                                : null,
+                      Row(children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            vertical: 30,
+                            horizontal: 30,
+                          ),
+                          child: GestureDetector(
+                            onTap: getImage,
+                            child: CircleAvatar(
+                              radius: 71,
+                              backgroundColor: Colors.grey,
+                              backgroundImage: streamSnapshot.data!['image'] !=
+                                      'Image goes here'
+                                  ? NetworkImage(streamSnapshot.data!['image'])
+                                  : NetworkImage(profileImage),
+                            ),
                           ),
                         ),
-                      ),
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey,
+                        ),
+                      ]),
                       Form(
                           key: _formKey,
                           child: Column(
                             children: [
-                              SizedBox(height: 20.0),
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(14),
-                                child: TextFormField(
-                                    controller: countryController,
-                                    decoration: textInputDecoration.copyWith(
-                                        hintText: 'Country'),
-                                    validator: countryValidator),
+                                borderRadius: BorderRadius.circular(10),
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 270,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      streamSnapshot.data!['name'],
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
                               SizedBox(height: 20.0),
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(14),
-                                child: TextFormField(
-                                    controller: descriptionController,
-                                    decoration: textInputDecoration.copyWith(
-                                        hintText: 'Description'),
-                                    keyboardType: TextInputType.multiline,
-                                    minLines: 3,
-                                    maxLines: 6,
-                                    validator: descriptionValidator),
+                                borderRadius: BorderRadius.circular(10),
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 270,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      streamSnapshot.data!['country'],
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20.0),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 270,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      streamSnapshot.data!['age'],
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20.0),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: SizedBox(
+                                  height: 80,
+                                  width: 270,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      streamSnapshot.data!['description'],
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           )),
                       SizedBox(height: 20.0),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: SizedBox(
-                          height: 50,
-                          width: 270,
-                          child: TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "Need help ?",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.white,
-                            ),
-                          ),
-                        ),
+                      Text(
+                        "Need help ?",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       SizedBox(height: 20.0),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: SizedBox(
-                          height: 50,
-                          width: 270,
-                          child: TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "Sign out",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.white,
-                            ),
-                          ),
-                        ),
+                      Text(
+                        "Sign out",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       SizedBox(height: 20.0),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: SizedBox(
-                          height: 50,
-                          width: 270,
-                          child: TextButton(
-                            onPressed: () async {
-                              await userSevice.deleteUser();
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => AuthenticateScreen()));
-                            },
-                            child: Text(
-                              "Delete account",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.white,
-                            ),
-                          ),
-                        ),
+                      Text(
+                        "Delete account",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                       SizedBox(height: 20.0),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: SizedBox(
-                          height: 50,
-                          width: 170,
-                          child: ElevatedButton.icon(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                Color.fromRGBO(131, 133, 238, 1),
-                              ),
-                            ),
-                            icon: Text(
-                              'Save',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontFamily: 'Raleway'),
-                            ),
-                            label: Icon(
-                              Icons.east,
-                              color: Colors.black,
-                              size: 40.0,
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState?.validate() == true) {
-                                var country = countryController.value.text;
-                                var description =
-                                    descriptionController.value.text;
-                                var image = profileImage;
-
-                                databaseService.profilUpdate(
-                                    country, description, image);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ],
