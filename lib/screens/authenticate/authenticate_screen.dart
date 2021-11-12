@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_time_picker/date_time_picker.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:novalinguo/common/constants.dart';
 import 'package:novalinguo/common/loading.dart';
 import 'package:novalinguo/screens/authenticate/reset.dart';
@@ -319,7 +319,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                               var description = "";
                               var image = "";
                               var isConnected = false;
-                              var isChatting = false;
+
                               dynamic result = showSignIn
                                   ? await _auth.signInWithEmailAndPassword(
                                       email, password)
@@ -332,7 +332,7 @@ class _AuthenticateScreenState extends State<AuthenticateScreen> {
                                       description,
                                       image,
                                       isConnected,
-                                      isChatting);
+                                    );
                               if (result == null) {
                                 setState(() {
                                   loading = false;

@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:novalinguo/models/user.dart';
 import 'package:novalinguo/services/database.dart';
 
+import 'notification_service.dart';
+
 class AuthenticationService {
   // tous le code de firebase authentification
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -9,7 +11,15 @@ class AuthenticationService {
 
   AppUser? _userFromFirebaseUser(User? user) {
     //permet d'appeler user de notre user.dart au lieu de l'user firebase
+    initUser(user);
     return user != null ? AppUser(user.uid) : null;
+  }
+
+  void initUser(User? user) async {
+    if (user == null) return;
+    NotificationService.getToken().then((value) {
+      DatabaseService(user.uid).saveToken(value);
+    });
   }
 
   //permet d'ecouter si l'utilisateur est connecter ou non
@@ -38,8 +48,7 @@ class AuthenticationService {
       String? country,
       String? description,
       String? image,
-      bool isConnected,
-      bool isChatting) async {
+      bool isConnected) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -47,8 +56,8 @@ class AuthenticationService {
       if (user == null) {
         throw Exception("No user found");
       } else {
-        await DatabaseService(user.uid).saveUser(
-            name, age, country, description, image, isConnected, isChatting);
+        await DatabaseService(user.uid)
+            .saveUser(name, age, country, description, image, isConnected);
         try {
           user.sendEmailVerification();
           return user.uid;

@@ -3,6 +3,7 @@ import 'package:novalinguo/models/user.dart';
 import 'package:novalinguo/screens/home/user_list.dart';
 import 'package:novalinguo/services/authentication.dart';
 import 'package:novalinguo/services/database.dart';
+import 'package:novalinguo/services/notification_service.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,6 +11,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NotificationService.initialize();
     final user = Provider.of<AppUser?>(context);
     if (user == null) throw Exception("user not found");
     final database = DatabaseService(user.uid);

@@ -1,4 +1,4 @@
-import 'package:novalinguo/models/user.dart';
+// import 'package:novalinguo/models/user.dart';
 
 class ChatParams {
   final String userUid;

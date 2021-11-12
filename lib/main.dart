@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:novalinguo/screens/chat/chat_screen.dart';
 import 'package:novalinguo/screens/splashscreen_wrapper.dart';
@@ -8,9 +9,14 @@ import 'models/chat_params.dart';
 import 'models/user.dart';
 //import 'package:novalinguo/screens/authenticate/authenticate_screen.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Background message ${message.messageId}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // if (!kIsWeb) {
   //     await FirebaseCrashlytics.instance
   //         .setCrashlyticsCollectionEnabled(kDebugMode ? false : true);

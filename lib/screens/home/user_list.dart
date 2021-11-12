@@ -1,13 +1,13 @@
-import 'dart:math';
-import 'dart:convert';
+// import 'dart:math';
+// import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:novalinguo/common/bottomBar.dart';
 import 'package:novalinguo/models/chat_params.dart';
 import 'package:novalinguo/models/user.dart';
 import 'package:novalinguo/services/database.dart';
-import 'package:novalinguo/services/user.dart';
+// import 'package:novalinguo/services/user.dart';
 import 'package:provider/provider.dart';
 
 class UserList extends StatefulWidget {
@@ -18,7 +18,7 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
-    final users = Provider.of<List<AppUserData>>(context);
+    // final users = Provider.of<List<AppUserData>>(context);
     // final user = Provider.of<AppUserData>(context);
     final currentUser = Provider.of<AppUser?>(context);
     if (currentUser == null) throw Exception("current user not found");
